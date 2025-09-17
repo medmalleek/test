@@ -1,0 +1,84 @@
+<!-- task-list.component.html -->
+<div class="container">
+  <header>
+    <h1><i class="fas fa-tasks me-2"></i>Task Management System</h1>
+    <button class="add-button" routerLink="/task">
+      <i class="fas fa-plus me-2"></i>Add New Task
+    </button>
+  </header>
+
+  <div class="filters">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Search tasks..."
+        [(ngModel)]="searchTerm"
+        (change)="onSearch()">
+      <!-- <button (click)="onSearch()">
+        <i class="fas fa-search"></i> Search
+      </button> -->
+    </div>
+
+    <select [(ngModel)]="selectedStatus" (change)="onSearch()">
+      <option [value]="-1">All Statuses</option>
+      <option *ngFor="let status of statuses; let i = index" [value]="i">
+        {{status}}
+      </option>
+    </select>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <div class="tasks" *ngIf="!isLoading">
+    <div class="no-tasks" *ngIf="tasks.length === 0">
+      No tasks found.
+    </div>
+
+    <div class="task-card" *ngFor="let task of tasksShow">
+      <div class="task-header">
+        <h3>{{task.title}}</h3>
+        <div class="task-actions">
+          <button class="edit-button" (click)="onEdit(task.id)">
+            Edit
+          </button>
+          <button class="delete-button" (click)="onDelete(task.id)">
+            Delete
+          </button>
+        </div>
+      </div>
+      <p>{{task.description}}</p>
+      <div class="task-meta">
+        <span class="status badge">
+          {{statuses[task.status]}}
+        </span>
+        <span class="due-date text-muted">
+          Due: {{task.dueDate | date}}
+        </span>
+      </div>
+    </div>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)">
+        Previous
+      </button>
+      
+      <span *ngFor="let page of [].constructor(totalPages); let i = index">
+        <button 
+          [class.active]="currentPage === i + 1"
+          (click)="onPageChange(i + 1)">
+          {{i + 1}}
+        </button>
+      </span>
+
+      <button 
+        [disabled]="currentPage === totalPages"
+        (click)="onPageChange(currentPage + 1)">
+        Next
+      </button>
+    </div>
+  </div>
+</div>
